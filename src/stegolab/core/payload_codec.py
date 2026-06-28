@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import zlib
 
-from .errors import IntegrityCheckFailed, UnsupportedFileType
+from .errors import IntegrityCheckFailed, UnsupportedFileType, UnsupportedMethod
 from .frame import encode_frame
 from .types import (
     Compression,
@@ -80,6 +80,8 @@ def encode_payload(
     encryption: Encryption = Encryption.NONE,
     recovery_class: RecoveryClass = RecoveryClass.EXACT,
 ) -> bytes:
+    if encryption != Encryption.NONE:
+        raise UnsupportedMethod("encryption is not implemented in the MVP")
     comp = select_compression(compression, mime_type, raw)
     sha256 = hashlib.sha256(raw).digest()
     payload_bytes = _compress(comp, raw)

@@ -66,3 +66,12 @@ def test_none_compression_round_trip():
     parsed = frame.parse_frame(framed)
     assert parsed.compression == t.Compression.NONE
     assert payload_codec.decode_payload(parsed) == raw
+
+
+def test_encode_rejects_encryption_in_mvp():
+    with pytest.raises(errors.UnsupportedMethod):
+        payload_codec.encode_payload(
+            raw=b"x", payload_type=t.PayloadType.BYTES,
+            original_filename="x.bin", mime_type="application/octet-stream",
+            encryption=t.Encryption.AES_256_GCM,
+        )

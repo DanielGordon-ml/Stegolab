@@ -136,8 +136,11 @@ def parse_frame(data: bytes) -> ParsedFrame:
         raise CorruptedPayload("invalid enum in frame header") from exc
     sha256 = c.take(32)
     payload_len = c.u32()
-    filename = c.take(c.u16()).decode("utf-8", errors="strict")
-    mime_type = c.take(c.u16()).decode("utf-8", errors="strict")
+    try:
+        filename = c.take(c.u16()).decode("utf-8")
+        mime_type = c.take(c.u16()).decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise CorruptedPayload("non-UTF-8 string field in frame header") from exc
     salt = nonce = None
     if int(encryption) != 0:
         salt = c.take(c.u8())

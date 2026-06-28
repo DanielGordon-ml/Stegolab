@@ -90,3 +90,11 @@ def test_extra_trailing_bytes_are_ignored():
     data = frame.encode_frame(_fields()) + b"\x00\x00\x99"
     parsed = frame.parse_frame(data)
     assert parsed.payload_bytes == b"the secret payload"
+
+
+def test_non_utf8_string_field_raises_corrupted():
+    data = bytearray(frame.encode_frame(_fields(filename="okfile.txt")))
+    idx = data.index(b"okfile.txt")
+    data[idx] = 0xFF  # 0xFF is never a valid UTF-8 byte
+    with pytest.raises(errors.CorruptedPayload):
+        frame.parse_frame(bytes(data))
