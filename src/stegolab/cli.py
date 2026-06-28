@@ -8,6 +8,7 @@ import json as _json
 import typer
 
 from .core.errors import StegoLabError, UnsupportedMethod
+from .eval import text_metrics
 from .image import bitplane_image, edge_adaptive_lsb, lsb, randomized_lsb
 from .text import zero_width
 
@@ -141,6 +142,30 @@ def capacity(
         _emit("capacity", method, result, json_out)
     except StegoLabError as exc:
         _fail("capacity", method, exc, json_out)
+
+
+_TEXT_METHODS = {"text-zero-width"}
+
+
+@app.command()
+def analyze(
+    cover: str = typer.Option(..., "--cover"),
+    stego: str = typer.Option(..., "--stego"),
+    method: str = typer.Option(..., "--method"),
+    metrics: str = typer.Option("zero-width-count,visible-diff,codepoints,normalization", "--metrics"),
+    json_out: bool = typer.Option(False, "--json"),
+):
+    try:
+        _resolve(method)  # validates the method id (UnsupportedMethod -> exit 5)
+        if method not in _TEXT_METHODS:
+            raise UnsupportedMethod("image analysis metrics are added in a later phase")
+        from .text.zero_width import _read_text  # wraps non-UTF-8 as InvalidArguments (exit 2)
+        cover_text = _read_text(cover)
+        stego_text = _read_text(stego)
+        result = text_metrics.analyze_text(cover_text, stego_text, [m for m in metrics.split(",") if m])
+        _emit("analyze", method, result, json_out)
+    except StegoLabError as exc:
+        _fail("analyze", method, exc, json_out)
 
 
 def main() -> None:
