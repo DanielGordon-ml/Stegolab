@@ -9,6 +9,7 @@ import typer
 
 from .core.errors import StegoLabError, UnsupportedMethod
 from .image import bitplane_image, edge_adaptive_lsb, lsb, randomized_lsb
+from .text import zero_width
 
 app = typer.Typer(add_completion=False, help="StegoLab: educational steganography CLI.")
 
@@ -17,6 +18,7 @@ METHODS = {
     "image-randomized-lsb": randomized_lsb,
     "image-edge-adaptive-lsb": edge_adaptive_lsb,
     "image-bitplane": bitplane_image,
+    "text-zero-width": zero_width,
 }
 
 
@@ -65,6 +67,9 @@ def hide(
     hidden_msb_bits: int = typer.Option(4, "--hidden-msb-bits"),
     cover_lsb_bits: int = typer.Option(4, "--cover-lsb-bits"),
     resize_mode: str = typer.Option("fit", "--resize-mode"),
+    slot_policy: str = typer.Option("word-boundary", "--slot-policy"),
+    max_density: int = typer.Option(4, "--max-density"),
+    alphabet: str = typer.Option("default", "--alphabet"),
     compress: str = typer.Option("auto", "--compress"),
     overwrite: bool = typer.Option(False, "--overwrite"),
     json_out: bool = typer.Option(False, "--json"),
@@ -75,7 +80,7 @@ def hide(
                           params=_params(bits_per_channel=bits_per_channel, channels=channels, key=key,
                                          allow_unkeyed=allow_unkeyed, activity=activity,
                                          threshold_mode=threshold_mode, hidden_msb_bits=hidden_msb_bits,
-                                         cover_lsb_bits=cover_lsb_bits, resize_mode=resize_mode, compress=compress))
+                                         cover_lsb_bits=cover_lsb_bits, resize_mode=resize_mode, slot_policy=slot_policy, max_density=max_density, alphabet=alphabet, compress=compress))
         _emit("hide", method, result, json_out)
     except StegoLabError as exc:
         _fail("hide", method, exc, json_out)
@@ -91,6 +96,7 @@ def extract(
     allow_unkeyed: bool = typer.Option(False, "--allow-unkeyed"),
     hidden_msb_bits: int = typer.Option(4, "--hidden-msb-bits"),
     cover_lsb_bits: int = typer.Option(4, "--cover-lsb-bits"),
+    alphabet: str = typer.Option("default", "--alphabet"),
     overwrite: bool = typer.Option(False, "--overwrite"),
     json_out: bool = typer.Option(False, "--json"),
 ):
@@ -99,7 +105,7 @@ def extract(
         result = mod.extract(stego=stego, out=out, overwrite=overwrite,
                             params=_params(bits_per_channel=bits_per_channel, key=key,
                                            allow_unkeyed=allow_unkeyed, hidden_msb_bits=hidden_msb_bits,
-                                           cover_lsb_bits=cover_lsb_bits))
+                                           cover_lsb_bits=cover_lsb_bits, alphabet=alphabet))
         _emit("extract", method, result, json_out)
     except StegoLabError as exc:
         _fail("extract", method, exc, json_out)
@@ -119,6 +125,8 @@ def capacity(
     cover_lsb_bits: int = typer.Option(4, "--cover-lsb-bits"),
     compress: str = typer.Option("auto", "--compress"),
     resize_mode: str = typer.Option("fit", "--resize-mode"),
+    alphabet: str = typer.Option("default", "--alphabet"),
+    max_density: int = typer.Option(4, "--max-density"),
     json_out: bool = typer.Option(False, "--json"),
 ):
     # §10.4: capacity accepts the same method-specific options as hide; each method's
@@ -129,7 +137,7 @@ def capacity(
             bits_per_channel=bits_per_channel, channels=channels, key=key,
             allow_unkeyed=allow_unkeyed, activity=activity, threshold_mode=threshold_mode,
             hidden_msb_bits=hidden_msb_bits, cover_lsb_bits=cover_lsb_bits,
-            compress=compress, resize_mode=resize_mode))
+            compress=compress, resize_mode=resize_mode, alphabet=alphabet, max_density=max_density))
         _emit("capacity", method, result, json_out)
     except StegoLabError as exc:
         _fail("capacity", method, exc, json_out)
