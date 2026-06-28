@@ -10,7 +10,7 @@ def _cover(tmp_path, w=64, h=64, seed=0):
     rng = np.random.default_rng(seed)
     arr = rng.integers(0, 256, size=(h, w, 3), dtype=np.uint8)
     p = tmp_path / "cover.png"
-    Image.fromarray(arr, "RGB").save(p)
+    Image.fromarray(arr).save(p)
     return p
 
 
@@ -34,7 +34,7 @@ def test_text_round_trip(tmp_path):
 def test_image_payload_round_trip(tmp_path):
     cover = _cover(tmp_path, 80, 80)
     icon = tmp_path / "icon.png"
-    Image.fromarray(np.full((6, 6, 3), 99, np.uint8), "RGB").save(icon)
+    Image.fromarray(np.full((6, 6, 3), 99, np.uint8)).save(icon)
     out = tmp_path / "stego.png"
     rec = tmp_path / "rec.png"
     lsb.hide(cover=str(cover), payload=str(icon), out=str(out), overwrite=False, params={})

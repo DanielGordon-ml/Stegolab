@@ -12,7 +12,7 @@ runner = CliRunner()
 def _cover(tmp_path, w=64, h=64, seed=7):
     rng = np.random.default_rng(seed)
     p = tmp_path / "cover.png"
-    Image.fromarray(rng.integers(0, 256, (h, w, 3), dtype=np.uint8), "RGB").save(p)
+    Image.fromarray(rng.integers(0, 256, (h, w, 3), dtype=np.uint8)).save(p)
     return p
 
 

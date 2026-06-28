@@ -8,7 +8,7 @@ from stegolab.image import randomized_lsb as rlsb
 
 def _cover(tmp_path, w=64, h=64, seed=1):
     rng = np.random.default_rng(seed)
-    Image.fromarray(rng.integers(0, 256, (h, w, 3), dtype=np.uint8), "RGB").save(tmp_path / "c.png")
+    Image.fromarray(rng.integers(0, 256, (h, w, 3), dtype=np.uint8)).save(tmp_path / "c.png")
     return tmp_path / "c.png"
 
 

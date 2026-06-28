@@ -6,7 +6,7 @@ from stegolab.image import bitplane_image as bp, io_image
 
 
 def _png(path, arr):
-    Image.fromarray(arr.astype(np.uint8), "RGB").save(path)
+    Image.fromarray(arr.astype(np.uint8)).save(path)
     return path
 
 

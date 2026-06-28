@@ -72,7 +72,7 @@ def hide(
     try:
         mod = _resolve(method)
         result = mod.hide(cover=cover, payload=payload, out=out, overwrite=overwrite,
-                          params=_params(bits_per_channel=bits_per_channel, key=key,
+                          params=_params(bits_per_channel=bits_per_channel, channels=channels, key=key,
                                          allow_unkeyed=allow_unkeyed, activity=activity,
                                          threshold_mode=threshold_mode, hidden_msb_bits=hidden_msb_bits,
                                          cover_lsb_bits=cover_lsb_bits, resize_mode=resize_mode, compress=compress))

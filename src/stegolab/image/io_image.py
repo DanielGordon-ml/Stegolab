@@ -31,7 +31,7 @@ def save_image(path, arr: np.ndarray, *, overwrite: bool = False) -> None:
     if p.exists() and not overwrite:
         raise OutputExists(f"output exists: {p} (pass overwrite to replace)")
     p.parent.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(np.asarray(arr, dtype=np.uint8), "RGB").save(p)
+    Image.fromarray(np.asarray(arr, dtype=np.uint8)).save(p)
 
 
 def resize_to(arr: np.ndarray, size_wh: tuple[int, int], mode: str) -> np.ndarray:
@@ -42,7 +42,7 @@ def resize_to(arr: np.ndarray, size_wh: tuple[int, int], mode: str) -> np.ndarra
                 f"hidden image {arr.shape[1]}x{arr.shape[0]} != cover {w}x{h} and resize_mode=reject"
             )
         return arr
-    img = Image.fromarray(arr, "RGB")
+    img = Image.fromarray(arr)
     if mode in ("fit", "stretch"):
         out = img.resize((w, h), _RESAMPLE)
     elif mode == "center-crop":

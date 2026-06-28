@@ -8,7 +8,7 @@ from stegolab.image import io_image
 
 def _make_png(path, w=8, h=6):
     arr = (np.arange(h * w * 3, dtype=np.uint8) % 251).reshape(h, w, 3)
-    Image.fromarray(arr, "RGB").save(path)
+    Image.fromarray(arr).save(path)
     return arr
 
 
@@ -23,13 +23,13 @@ def test_load_png_rgb(tmp_path):
 
 def test_load_drops_alpha(tmp_path):
     p = tmp_path / "a.png"
-    Image.fromarray(np.zeros((4, 4, 4), dtype=np.uint8), "RGBA").save(p)
+    Image.fromarray(np.zeros((4, 4, 4), dtype=np.uint8)).save(p)
     assert io_image.load_image_rgb(p).shape == (4, 4, 3)
 
 
 def test_load_rejects_jpeg(tmp_path):
     p = tmp_path / "c.jpg"
-    Image.fromarray(np.zeros((4, 4, 3), dtype=np.uint8), "RGB").save(p)
+    Image.fromarray(np.zeros((4, 4, 3), dtype=np.uint8)).save(p)
     with pytest.raises(errors.UnsupportedFileType):
         io_image.load_image_rgb(p)
 

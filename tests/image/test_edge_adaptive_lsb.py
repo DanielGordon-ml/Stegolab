@@ -9,7 +9,7 @@ from stegolab.image import edge_adaptive_lsb as eal
 def _textured_cover(tmp_path, w=64, h=64, seed=2):
     rng = np.random.default_rng(seed)
     arr = rng.integers(0, 256, (h, w, 3), dtype=np.uint8)
-    Image.fromarray(arr, "RGB").save(tmp_path / "c.png")
+    Image.fromarray(arr).save(tmp_path / "c.png")
     return tmp_path / "c.png"
 
 
